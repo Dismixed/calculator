@@ -41,7 +41,7 @@ def evaluate():
                 del splits[indx - 2]
                 splits.insert(indx - 1, str(temp))
     print(splits)
-#2123123
+
 app = QApplication(sys.argv)
 
 window = QWidget()
