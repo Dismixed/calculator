@@ -22,12 +22,12 @@ def printans(ans):
 
 def evaluate():
     #splitting equation, splits at all non alphanumeric, keeps ".", keeps the delimiter
-    splits = re.split('([^a-zA-Z0-9-.])', text.toPlainText())
+    splits = re.split('([^a-zA-Z0-9.])', text.toPlainText())
     #reverse to find first occurance of \n to seperate the calculation
-    newsplits = splits
+    newsplits = splits.copy()
     newsplits.reverse()
-    indx2 = 0
     print(splits)
+    indx2 = 0
     for i in newsplits:
         indx2 = indx2 + 1
         if i == "\n":
@@ -68,6 +68,30 @@ def evaluate():
                 del splits[indx - 1]
                 del splits[indx - 2]
                 splits.insert(indx - 1, str(temp))
+
+    if "+" in splits:
+        indx = 0
+        for y in splits:
+            indx = indx + 1
+            if y == "+":
+                temp = int(splits[indx - 2]) + int(splits[indx])
+                del splits[indx]
+                del splits[indx - 1]
+                del splits[indx - 2]
+                splits.insert(indx - 1, str(temp))
+                print(splits)
+
+    if "-" in splits:
+        indx = 0
+        for y in splits:
+            indx = indx + 1
+            if y == "-":
+                temp = int(splits[indx - 2]) - int(splits[indx])
+                del splits[indx]
+                del splits[indx - 1]
+                del splits[indx - 2]
+                splits.insert(indx - 1, str(temp))
+                print(splits)
 
     printans(splits)
     splits.clear()
