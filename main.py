@@ -24,15 +24,17 @@ def evaluate():
     #splitting equation, splits at all non alphanumeric, keeps ".", keeps the delimiter
     splits = re.split('([^a-zA-Z0-9-.])', text.toPlainText())
     #reverse to find first occurance of \n to seperate the calculation
-    newsplits = reversed(splits)
+    newsplits = splits
+    newsplits.reverse()
     indx2 = 0
+    print(splits)
     for i in newsplits:
         indx2 = indx2 + 1
         if i == "\n":
-            del newsplits[indx2:]
-            splits = reversed(newsplits)
-            print(newsplits)
-    print(splits)
+            del newsplits[indx2 - 1:]
+            splits = newsplits
+            splits.reverse()
+            break
 
     if "²" in splits:
         indx = 0
@@ -44,7 +46,7 @@ def evaluate():
                 del splits[indx - 1]
                 del splits[indx - 2]
                 splits.insert(indx - 1, str(temp))
-    print(splits)
+
     if "*" in splits:
         indx = 0
         for y in splits:
@@ -55,7 +57,7 @@ def evaluate():
                 del splits[indx - 1]
                 del splits[indx - 2]
                 splits.insert(indx - 2, str(temp))
-    print(splits)
+
     if "÷" in splits:
         indx = 0
         for y in splits:
@@ -68,7 +70,6 @@ def evaluate():
                 splits.insert(indx - 1, str(temp))
 
     printans(splits)
-    print(splits)
     splits.clear()
 
 app = QApplication(sys.argv)
