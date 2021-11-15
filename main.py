@@ -15,6 +15,11 @@ def backspace():
 def clear():
     text.clear()
 
+def printans(ans):
+    text.append(str(ans[0]))
+    text.append("")
+
+
 def evaluate():
     #splitting equation, splits at all non alphanumeric, keeps ".", keeps the delimiter
     splits = re.split('([^a-zA-Z0-9-.])', text.toPlainText())
@@ -29,7 +34,7 @@ def evaluate():
                 del splits[indx - 1]
                 del splits[indx - 2]
                 splits.insert(indx - 1, str(temp))
-
+    print(splits)
     if "*" in splits:
         indx = 0
         for y in splits:
@@ -39,8 +44,22 @@ def evaluate():
                 del splits[indx]
                 del splits[indx - 1]
                 del splits[indx - 2]
-                splits.insert(indx - 1, str(temp))
+                splits.insert(indx - 2, str(temp))
     print(splits)
+    if "÷" in splits:
+        indx = 0
+        for y in splits:
+            indx = indx + 1
+            if y == "÷":
+                temp = int(splits[indx - 2]) / int(splits[indx])
+                del splits[indx]
+                del splits[indx - 1]
+                del splits[indx - 2]
+                splits.insert(indx - 1, str(temp))
+
+    printans(splits)
+    print(splits)
+    splits.clear()
 
 app = QApplication(sys.argv)
 
@@ -145,6 +164,7 @@ rparentheses.clicked.connect(lambda:addprint(")"))
 lparentheses.clicked.connect(lambda:addprint("("))
 sqrt.clicked.connect(lambda:addprint("√"))
 dot.clicked.connect(lambda:addprint("."))
+
 
 window.setLayout(layout)
 window.show()
