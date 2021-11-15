@@ -1,7 +1,9 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QGridLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout
 import sys
 from PyQt5.QtWidgets import QTextEdit
 import re
+import math
+from decimal import Decimal
 
 def addprint(print):
     if print == "√":
@@ -9,101 +11,139 @@ def addprint(print):
     else:
         text.setText(text.toPlainText() + str(print))
 
+
 def backspace():
-    pass
+    newtext = text.toPlainText()
+    finaltext = ""
+    for i in range(len(newtext)):
+        if i == len(newtext) - 1:
+            break
+        finaltext = finaltext + newtext[i]
+    text.setText(finaltext)
+
 
 def clear():
     text.clear()
+
 
 def printans(ans):
     text.append(str(ans[0]))
     text.append("")
 
 
-def evaluate():
-    #splitting equation, splits at all non alphanumeric, keeps ".", keeps the delimiter
-    splits = re.split('([^a-zA-Z0-9.])', text.toPlainText())
-    #reverse to find first occurance of \n to seperate the calculation
-    newsplits = splits.copy()
+def pieval(func):
+    while "π" in func:
+        for i in range(len(func)):
+            if func[i] == "π":
+                func[i] = math.pi
+    return func
+
+
+# reverse to find first occurance of \n to seperate the calculation
+def reverselist(newsplits):
     newsplits.reverse()
-    print(splits)
     indx2 = 0
     for i in newsplits:
         indx2 = indx2 + 1
         if i == "\n":
             del newsplits[indx2 - 1:]
-            splits = newsplits
-            splits.reverse()
-            break
+            newsplits.reverse()
+            return newsplits
 
-    if "²" in splits:
-        indx = 0
-        for i in splits:
-            indx = indx + 1
-            if i == "²":
-                # -2 because it's 1 behind the squared symbol and an extra for accounting for starting indx at 1
-                temp = int(splits[indx - 2]) * int(splits[indx - 2])
-                del splits[indx - 1]
-                del splits[indx - 2]
-                splits.insert(indx - 1, str(temp))
 
-    if "*" in splits:
-        indx = 0
-        for y in splits:
-            indx = indx + 1
-            if y == "*":
-                temp = int(splits[indx - 2]) * int(splits[indx])
-                del splits[indx]
-                del splits[indx - 1]
-                del splits[indx - 2]
-                splits.insert(indx - 2, str(temp))
+# removing blank strings
+def blankremove(newsplits):
+    while "" in newsplits:
+        newsplits.remove("")
+    while " " in newsplits:
+        newsplits.remove(" ")
+    return newsplits
 
-    if "÷" in splits:
-        indx = 0
-        for y in splits:
-            indx = indx + 1
-            if y == "÷":
-                temp = int(splits[indx - 2]) / int(splits[indx])
-                del splits[indx]
-                del splits[indx - 1]
-                del splits[indx - 2]
-                splits.insert(indx - 1, str(temp))
 
-    if "+" in splits:
-        indx = 0
-        for y in splits:
-            indx = indx + 1
-            if y == "+":
-                temp = int(splits[indx - 2]) + int(splits[indx])
-                del splits[indx]
-                del splits[indx - 1]
-                del splits[indx - 2]
-                splits.insert(indx - 1, str(temp))
-                print(splits)
+def evaluate():
+    # splitting equation, splits at all non alphanumeric, keeps ".", keeps the delimiter
+    splits = re.split('([^a-zA-Z0-9.])', text.toPlainText())
+    tempsplits = []
 
-    if "-" in splits:
-        indx = 0
-        for y in splits:
-            indx = indx + 1
-            if y == "-":
-                temp = int(splits[indx - 2]) - int(splits[indx])
-                del splits[indx]
-                del splits[indx - 1]
-                del splits[indx - 2]
-                splits.insert(indx - 1, str(temp))
-                print(splits)
+    splits = blankremove(splits)
+    splits = pieval(splits)
+    if "\n" in splits:
+        splits = reverselist(splits)
+
+    # solving loop
+    while len(splits) > 1:
+
+        if "²" in splits:
+            indx = 0
+            for i in splits:
+                indx = indx + 1
+                if i == "²":
+                    # -2 because it's 1 behind the squared symbol and an extra for accounting for starting indx at 1
+                    temp = int(splits[indx - 2]) * int(splits[indx - 2])
+                    del splits[indx - 1]
+                    del splits[indx - 2]
+                    splits.insert(indx - 2, str(temp))
+                    print(splits)
+
+        if "*" in splits:
+            indx = 0
+            for y in splits:
+                indx = indx + 1
+                if y == "*":
+                    temp = int(splits[indx - 2]) * int(splits[indx])
+                    del splits[indx]
+                    del splits[indx - 1]
+                    del splits[indx - 2]
+                    splits.insert(indx - 2, str(temp))
+
+        if "÷" in splits:
+            indx = 0
+            for y in splits:
+                indx = indx + 1
+                if y == "÷":
+                    temp = int(splits[indx - 2]) / int(splits[indx])
+                    del splits[indx]
+                    del splits[indx - 1]
+                    del splits[indx - 2]
+                    splits.insert(indx - 2, str(temp))
+        print(splits)
+
+        if "+" in splits:
+            indx = 0
+            for y in splits:
+                indx = indx + 1
+                if y == "+":
+                    temp = int(splits[indx - 2]) + int(splits[indx])
+                    del splits[indx]
+                    del splits[indx - 1]
+                    del splits[indx - 2]
+                    splits.insert(indx - 2, str(temp))
+                    print(splits)
+
+        if "-" in splits:
+            indx = 0
+            for y in splits:
+                indx = indx + 1
+                if y == "-":
+                    temp = int(splits[indx - 2]) - int(splits[indx])
+                    del splits[indx]
+                    del splits[indx - 1]
+                    del splits[indx - 2]
+                    splits.insert(indx - 2, str(temp))
+                    print(splits)
+        print(splits)
 
     printans(splits)
     splits.clear()
 
-app = QApplication(sys.argv)
 
+app = QApplication(sys.argv)
 window = QWidget()
 window.setWindowTitle("Calculator")
 layout = QGridLayout()
-
 text = QTextEdit()
 
+# buttons
 num1 = QPushButton("1")
 num2 = QPushButton("2")
 num3 = QPushButton("3")
@@ -130,6 +170,7 @@ pi = QPushButton("π")
 lparentheses = QPushButton("(")
 rparentheses = QPushButton(")")
 
+# stylesheets
 equals.setStyleSheet("color: white; background-color: blue")
 
 num1.setStyleSheet("background-color: #F8F8FF")
@@ -143,6 +184,7 @@ num8.setStyleSheet("background-color: #F8F8FF")
 num9.setStyleSheet("background-color: #F8F8FF")
 num0.setStyleSheet("background-color: #F8F8FF")
 
+# widgets
 layout.addWidget(text, 0, 0, 1, 5)
 
 layout.addWidget(dot, 5, 2)
@@ -161,7 +203,6 @@ layout.addWidget(squared, 2, 0)
 layout.addWidget(lparentheses, 3, 0)
 layout.addWidget(rparentheses, 4, 0)
 
-
 layout.addWidget(num0, 5, 1)
 layout.addWidget(num1, 4, 1)
 layout.addWidget(num2, 4, 2)
@@ -173,33 +214,31 @@ layout.addWidget(num7, 2, 1)
 layout.addWidget(num8, 2, 2)
 layout.addWidget(num9, 2, 3)
 
+# clicked function
+num1.clicked.connect(lambda: addprint(1))
+num2.clicked.connect(lambda: addprint(2))
+num3.clicked.connect(lambda: addprint(3))
+num4.clicked.connect(lambda: addprint(4))
+num5.clicked.connect(lambda: addprint(5))
+num6.clicked.connect(lambda: addprint(6))
+num7.clicked.connect(lambda: addprint(7))
+num8.clicked.connect(lambda: addprint(8))
+num9.clicked.connect(lambda: addprint(9))
+num0.clicked.connect(lambda: addprint(0))
 
-num1.clicked.connect(lambda:addprint(1))
-num2.clicked.connect(lambda:addprint(2))
-num3.clicked.connect(lambda:addprint(3))
-num4.clicked.connect(lambda:addprint(4))
-num5.clicked.connect(lambda:addprint(5))
-num6.clicked.connect(lambda:addprint(6))
-num7.clicked.connect(lambda:addprint(7))
-num8.clicked.connect(lambda:addprint(8))
-num9.clicked.connect(lambda:addprint(9))
-num0.clicked.connect(lambda:addprint(0))
-
-
-plus.clicked.connect(lambda:addprint("+"))
-minus.clicked.connect(lambda:addprint("-"))
-divided.clicked.connect(lambda:addprint("÷"))
-times.clicked.connect(lambda:addprint("*"))
-bkspce.clicked.connect(lambda:bkspce())
-clr.clicked.connect(lambda:clear())
-equals.clicked.connect(lambda:evaluate())
-squared.clicked.connect(lambda:addprint("²"))
-pi.clicked.connect(lambda:addprint("π"))
-rparentheses.clicked.connect(lambda:addprint(")"))
-lparentheses.clicked.connect(lambda:addprint("("))
-sqrt.clicked.connect(lambda:addprint("√"))
-dot.clicked.connect(lambda:addprint("."))
-
+plus.clicked.connect(lambda: addprint("+"))
+minus.clicked.connect(lambda: addprint("-"))
+divided.clicked.connect(lambda: addprint("÷"))
+times.clicked.connect(lambda: addprint("*"))
+bkspce.clicked.connect(lambda: backspace())
+clr.clicked.connect(lambda: clear())
+equals.clicked.connect(lambda: evaluate())
+squared.clicked.connect(lambda: addprint("²"))
+pi.clicked.connect(lambda: addprint("π"))
+rparentheses.clicked.connect(lambda: addprint(")"))
+lparentheses.clicked.connect(lambda: addprint("("))
+sqrt.clicked.connect(lambda: addprint("√"))
+dot.clicked.connect(lambda: addprint("."))
 
 window.setLayout(layout)
 window.show()
