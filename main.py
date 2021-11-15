@@ -23,7 +23,17 @@ def printans(ans):
 def evaluate():
     #splitting equation, splits at all non alphanumeric, keeps ".", keeps the delimiter
     splits = re.split('([^a-zA-Z0-9-.])', text.toPlainText())
+    #reverse to find first occurance of \n to seperate the calculation
+    newsplits = reversed(splits)
+    indx2 = 0
+    for i in newsplits:
+        indx2 = indx2 + 1
+        if i == "\n":
+            del newsplits[indx2:]
+            splits = reversed(newsplits)
+            print(newsplits)
     print(splits)
+
     if "²" in splits:
         indx = 0
         for i in splits:
