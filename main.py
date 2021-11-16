@@ -77,7 +77,7 @@ def evaluate():
 
     # solving loop
     while len(splits) > 1:
-
+        #floats instead of ints
         if "²" in splits:
             indx = 0
             for i in splits:
