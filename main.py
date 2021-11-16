@@ -5,11 +5,12 @@ import re
 import math
 from decimal import Decimal
 
-def addprint(print):
-    if print == "√":
-        text.setText(text.toPlainText() + str(print) + "(")
+def addprint(printed):
+    if printed == "√":
+        # square root parentheses
+        text.setText(text.toPlainText() + str(printed) + "(")
     else:
-        text.setText(text.toPlainText() + str(print))
+        text.setText(text.toPlainText() + str(printed))
 
 
 def backspace():
@@ -62,10 +63,10 @@ def blankremove(newsplits):
         newsplits.remove(" ")
     return newsplits
 
-
-def evaluate():
+#secondary eval(For parentheses)
+def evaluate(eval, secondary):
     # splitting equation, splits at all non alphanumeric, keeps ".", keeps the delimiter
-    splits = re.split('([^a-zA-Z0-9.])', text.toPlainText())
+    splits = re.split('([^a-zA-Z0-9.])', eval)
 
 
     tempsplits = []
@@ -77,6 +78,27 @@ def evaluate():
 
     # solving loop
     while len(splits) > 1:
+        print("t")
+        # floats instead of ints
+        if "(" in splits:
+            for i in range(len(splits)):
+                if splits[i] == "(":
+                    indexed1 = i
+                    indexed2 = 0
+                    for y in range(len(splits[i:])):
+                        indexed2 = indexed2 + 1
+                        if splits[y] == ")":
+                            break
+                    mainstr = ""
+                    for x in range(len(splits[indexed1:indexed2])):
+                        mainstr = mainstr + str(splits[x])
+                    mainstr = mainstr.replace("(", "")
+                    mainstr = mainstr.replace(")", "")
+
+                    del splits[indexed1:indexed2]
+                    splits.insert(indexed1, evaluate(mainstr, False))
+                    print(splits)
+                    break
 
         if "²" in splits:
             indx = 0
@@ -88,7 +110,6 @@ def evaluate():
                     del splits[indx - 1]
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
-                    print(splits)
 
         if "*" in splits:
             indx = 0
@@ -117,7 +138,6 @@ def evaluate():
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
             break
-        print(splits)
 
         if "+" in splits:
             indx = 0
@@ -129,7 +149,6 @@ def evaluate():
                     del splits[indx - 1]
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
-                    print(splits)
 
         if "-" in splits:
             indx = 0
@@ -141,12 +160,17 @@ def evaluate():
                     del splits[indx - 1]
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
-                    print(splits)
+
         print(splits)
         break
 
-    printans(splits)
-    splits.clear()
+    #secondary eval (for paretheses)
+    if secondary:
+        printans(splits)
+        splits.clear()
+    else:
+        return float(splits[0])
+
 
 
 app = QApplication(sys.argv)
@@ -244,7 +268,7 @@ divided.clicked.connect(lambda: addprint("÷"))
 times.clicked.connect(lambda: addprint("*"))
 bkspce.clicked.connect(lambda: backspace())
 clr.clicked.connect(lambda: clear())
-equals.clicked.connect(lambda: evaluate())
+equals.clicked.connect(lambda: evaluate(text.toPlainText(), True))
 squared.clicked.connect(lambda: addprint("²"))
 pi.clicked.connect(lambda: addprint("π"))
 rparentheses.clicked.connect(lambda: addprint(")"))
