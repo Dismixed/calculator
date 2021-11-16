@@ -78,7 +78,6 @@ def evaluate(eval, secondary):
 
     # solving loop
     while len(splits) > 1:
-        print("t")
         # floats instead of ints
         if "(" in splits:
             for i in range(len(splits)):
@@ -99,7 +98,7 @@ def evaluate(eval, secondary):
                     splits.insert(indexed1, evaluate(mainstr, False))
                     print(splits)
                     break
-
+                    
         if "²" in splits:
             indx = 0
             for i in splits:
@@ -110,6 +109,7 @@ def evaluate(eval, secondary):
                     del splits[indx - 1]
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
+                    
 
         if "*" in splits:
             indx = 0
