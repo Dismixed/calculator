@@ -27,7 +27,10 @@ def clear():
 
 
 def printans(ans):
-    text.append(str(ans[0]))
+    if ans == "Undefined":
+        text.append(ans)
+    else:
+        text.append(str(ans[0]))
     text.append("")
 
 
@@ -63,6 +66,8 @@ def blankremove(newsplits):
 def evaluate():
     # splitting equation, splits at all non alphanumeric, keeps ".", keeps the delimiter
     splits = re.split('([^a-zA-Z0-9.])', text.toPlainText())
+
+
     tempsplits = []
 
     splits = blankremove(splits)
@@ -79,7 +84,7 @@ def evaluate():
                 indx = indx + 1
                 if i == "²":
                     # -2 because it's 1 behind the squared symbol and an extra for accounting for starting indx at 1
-                    temp = int(splits[indx - 2]) * int(splits[indx - 2])
+                    temp = float(splits[indx - 2]) * float(splits[indx - 2])
                     del splits[indx - 1]
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
@@ -90,7 +95,7 @@ def evaluate():
             for y in splits:
                 indx = indx + 1
                 if y == "*":
-                    temp = int(splits[indx - 2]) * int(splits[indx])
+                    temp = float(splits[indx - 2]) * float(splits[indx])
                     del splits[indx]
                     del splits[indx - 1]
                     del splits[indx - 2]
@@ -101,11 +106,17 @@ def evaluate():
             for y in splits:
                 indx = indx + 1
                 if y == "÷":
-                    temp = int(splits[indx - 2]) / int(splits[indx])
+                    # Divide by zero error
+                    if splits[indx] == "0":
+                        printans("Undefined")
+                        splits.clear()
+                        break
+                    temp = float(splits[indx - 2]) / float(splits[indx])
                     del splits[indx]
                     del splits[indx - 1]
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
+            break
         print(splits)
 
         if "+" in splits:
@@ -113,7 +124,7 @@ def evaluate():
             for y in splits:
                 indx = indx + 1
                 if y == "+":
-                    temp = int(splits[indx - 2]) + int(splits[indx])
+                    temp = float(splits[indx - 2]) + float(splits[indx])
                     del splits[indx]
                     del splits[indx - 1]
                     del splits[indx - 2]
@@ -125,13 +136,14 @@ def evaluate():
             for y in splits:
                 indx = indx + 1
                 if y == "-":
-                    temp = int(splits[indx - 2]) - int(splits[indx])
+                    temp = float(splits[indx - 2]) - float(splits[indx])
                     del splits[indx]
                     del splits[indx - 1]
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
                     print(splits)
         print(splits)
+        break
 
     printans(splits)
     splits.clear()
