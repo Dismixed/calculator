@@ -162,7 +162,7 @@ def evaluate(eval, secondary):
                     splits.insert(indx - 2, str(temp))
 
         print(splits)
-        break
+
 
     #secondary eval (for paretheses)
     if secondary:
