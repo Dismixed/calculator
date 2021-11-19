@@ -144,15 +144,14 @@ def evaluate(eval, secondary):
                 if y == "÷":
                     # Divide by zero error
                     if splits[indx] == "0":
-                        printans("Undefined")
                         splits.clear()
+                        splits.append("Undefined")
                         break
                     temp = float(splits[indx - 2]) / float(splits[indx])
                     del splits[indx]
                     del splits[indx - 1]
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
-            break
 
         if "+" in splits:
             indx = 0
