@@ -5,6 +5,7 @@ import re
 import math
 from decimal import Decimal
 
+
 def addprint(printed):
     if printed == "√":
         # square root parentheses
@@ -63,6 +64,7 @@ def blankremove(newsplits):
         newsplits.remove(" ")
     return newsplits
 
+
 #secondary eval(For parentheses)
 def evaluate(eval, secondary):
     # splitting equation, splits at all non alphanumeric, keeps ".", keeps the delimiter
@@ -82,22 +84,25 @@ def evaluate(eval, secondary):
         if "(" in splits:
             for i in range(len(splits)):
                 if splits[i] == "(":
-                    indexed1 = i
-                    indexed2 = 0
-                    for y in range(len(splits[i:])):
-                        indexed2 = indexed2 + 1
-                        if splits[y] == ")":
-                            break
-                    mainstr = ""
-                    for x in range(len(splits[indexed1:indexed2])):
-                        mainstr = mainstr + str(splits[x])
-                    mainstr = mainstr.replace("(", "")
-                    mainstr = mainstr.replace(")", "")
+                    if splits[i - 1] == "√":
+                        pass
+                    else:
+                        indexed1 = i
+                        indexed2 = 0
+                        for y in range(len(splits[i:])):
+                            indexed2 = indexed2 + 1
+                            if splits[y] == ")":
+                                break
+                        mainstr = ""
+                        for x in range(len(splits[indexed1:indexed2])):
+                            mainstr = mainstr + str(splits[x])
+                        mainstr = mainstr.replace("(", "")
+                        mainstr = mainstr.replace(")", "")
 
-                    del splits[indexed1:indexed2]
-                    splits.insert(indexed1, evaluate(mainstr, False))
-                    print(splits)
-                    break
+                        del splits[indexed1:indexed2]
+                        splits.insert(indexed1, evaluate(mainstr, False))
+                        print(splits)
+                        break
                     
         if "²" in splits:
             indx = 0
@@ -109,7 +114,17 @@ def evaluate(eval, secondary):
                     del splits[indx - 1]
                     del splits[indx - 2]
                     splits.insert(indx - 2, str(temp))
-                    
+
+
+        if "√" in splits:
+            for i in range(len(splits)):
+                if splits[i] == "(":
+                    indx1 = i
+                    indx2 = 0
+                    for y in range(len(splits)):
+                        if splits[y] == ")":
+                            indx2 = y
+                            temp = evaluate()
 
         if "*" in splits:
             indx = 0
